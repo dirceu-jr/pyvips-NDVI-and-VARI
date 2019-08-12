@@ -13,7 +13,7 @@ pip install pyvips
 pip install numpy
 ```
 
-Okay? Call the program:
+Okay? Run the program:
 
 ```
 python3 pyvips-vari-ndvi.py
