@@ -58,7 +58,7 @@ def find_clipped_min_max(histogram, nmin, nmax):
 
 # return image bands depending of band_order
 def bandsplit(image, band_order):
-  if band_order == "GRN":
+  if band_order == 'GRN':
     second, first, third, alpha = image.bandsplit()
   else:
     first, second, third, alpha = image.bandsplit()
@@ -81,13 +81,13 @@ def ndvi(image, band_order):
 
 def apply_index(base, index):
   # load image
-  image = pyvips.Image.new_from_file(base + ".png")
+  image = pyvips.Image.new_from_file('./' + base + '.png')
 
   # call index method
   if index == 'ndvi':
-    alpha, result = ndvi(image, "RGN")
+    alpha, result = ndvi(image, 'RGN')
   elif index == 'vari':
-    alpha, result = vari(image, "RGB")
+    alpha, result = vari(image, 'RGB')
 
   # it will be used to 'normalize' results
   histogram = result_histogram(result)
@@ -105,7 +105,7 @@ def apply_index(base, index):
   rgb = result.maplut(rdylgn_image)
 
   # save to file
-  rgb.bandjoin(alpha).write_to_file(index + ".png")
+  rgb.bandjoin(alpha).write_to_file('./' + index + '.png')
 
 
 apply_index('nir', 'ndvi')
