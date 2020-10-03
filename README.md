@@ -33,7 +33,7 @@ python3 pyvips-vari-ndvi.py
 
 _nir.png_ and _rgb.png_ orthophoto thumbnails will be processed and resulting _ndvi.png_ and _vari.png_ will be saved.
 
-## Demo
+## Results
 
 ### RGB → VARI
 <img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/rgb.png" width="400" valign="middle" /> *→* <img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/vari.png" width="400" valign="middle" />
