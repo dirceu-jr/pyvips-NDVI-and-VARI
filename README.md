@@ -25,7 +25,7 @@ pip install numpy
 
 ## Run
 
-Okay? Run the program:
+OK? Run the program:
 
 ```
 python3 pyvips-vari-ndvi.py
