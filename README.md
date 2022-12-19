@@ -28,15 +28,18 @@ pip install numpy
 OK? Run the program:
 
 ```
-python3 pyvips-vari-ndvi.py
+python3 pyvips-vari-ndvi.py nir.png NDVI
+python3 pyvips-vari-ndvi.py rgb.png VARI
 ```
 
-_nir.png_ and _rgb.png_ orthophoto thumbnails will be processed and resulting _ndvi.png_ and _vari.png_ will be saved.
+_nir.png_ and _rgb.png_ orthophoto thumbnails will be processed and resulting _NDVI.png_ and _VARI.png_ will be saved.
+
+OBS: The code was made to process images with "alpha" (transparency) layer/band. JPG? Export to PNG before.
 
 ## Results
 
 ### RGB → VARI
-<img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/rgb.png" width="400" valign="middle" /> *→* <img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/vari.png" width="400" valign="middle" />
+<img src="https://github.com/dirceu-jr/pyvips-NDVI-and-VARI/blob/master/rgb.png" width="400" valign="middle" /> *→* <img src="https://github.com/dirceu-jr/pyvips-NDVI-and-VARI/blob/master/vari.png" width="400" valign="middle" />
 
 ### NIR → NDVI
-<img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/nir.png" width="400" valign="middle" /> *→* <img src="https://github.com/dirceup/pyvips-NDVI-and-VARI/blob/master/ndvi.png" width="400" valign="middle" />
+<img src="https://github.com/dirceu-jr/pyvips-NDVI-and-VARI/blob/master/nir.png" width="400" valign="middle" /> *→* <img src="https://github.com/dirceu-jr/pyvips-NDVI-and-VARI/blob/master/ndvi.png" width="400" valign="middle" />

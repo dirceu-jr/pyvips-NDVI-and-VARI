@@ -1,3 +1,5 @@
+import sys
+
 # install with 'pip install numpy'
 import numpy
 
@@ -79,14 +81,14 @@ def ndvi(image, band_order):
   return [alpha, index]
 
 
-def apply_index(base, index):
+def apply_index(input_file, index):
   # load image
-  image = pyvips.Image.new_from_file('./' + base + '.png')
+  image = pyvips.Image.new_from_file('./' + input_file)
 
   # call index method
-  if index == 'ndvi':
+  if index == 'NDVI':
     alpha, result = ndvi(image, 'RGN')
-  elif index == 'vari':
+  elif index == 'VARI':
     alpha, result = vari(image, 'RGB')
 
   # it will be used to 'normalize' results
@@ -105,8 +107,7 @@ def apply_index(base, index):
   rgb = result.maplut(rdylgn_image)
 
   # save to file
-  rgb.bandjoin(alpha).write_to_file('./' + index + '.png')
+  rgb.bandjoin(alpha).write_to_file('./' + index.lower() + '.png')
 
 
-apply_index('nir', 'ndvi')
-apply_index('rgb', 'vari')
+apply_index(sys.argv[1], sys.argv[2])
