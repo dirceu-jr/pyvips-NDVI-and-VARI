@@ -6,23 +6,17 @@ import numpy
 # install with 'pip install pyvips'
 import pyvips
 
-# it is bundled with...
-from colormaps import RdYlGn_lut
-
-numpy.set_printoptions(threshold=numpy.inf)
+numpy.set_printoptions(threshold = numpy.inf)
 
 # find min/max and histogram
 def result_histogram(result):
   np_2d = numpy.ndarray(
-    buffer=result.write_to_memory(),
-    dtype=numpy.float32,
-    shape=[result.height, result.width]
+    buffer = result.write_to_memory(),
+    dtype = numpy.float32,
+    shape = [result.height, result.width]
   )
-  
-  flat_result = np_2d.flatten()
 
-  histogram = numpy.histogram(flat_result, bins=256)[0]
-  return histogram
+  return numpy.histogram(result, bins = 256)[0]
 
 
 # Remaps value (that has an expected range of in_low to in_high) into a target range of to_low to to_high
@@ -58,6 +52,7 @@ def find_clipped_min_max(histogram, nmin, nmax):
     'nmax': math_map_value(last_upper_i, 0, 255, nmin, nmax)
   }
 
+
 # return image bands depending of band_order
 def bandsplit(image, band_order):
   if band_order == 'GRN':
@@ -67,12 +62,14 @@ def bandsplit(image, band_order):
   
   return [first, second, third, alpha]
 
+
 # apply image manipulation algebra
 # VARI
 def vari(image, band_order):
   r, g, b, alpha = bandsplit(image, band_order)
   index = (g - r) / (g + r - b)
   return [alpha, index]
+
 
 # NDVI
 def ndvi(image, band_order):
@@ -100,14 +97,15 @@ def apply_index(input_file, index):
   nmax = clip_min_max['nmax']
 
   # apply image manipulation algebra to 'normalize' results
-  result = ((result-nmin) / (nmax-nmin)) * 256
+  result = ((result - nmin) / (nmax - nmin)) * 256
 
   # apply Look-Up-Table (LUT)
-  rdylgn_image = pyvips.Image.new_from_array(RdYlGn_lut).bandfold()
+  rdylgn_image = pyvips.Image.new_from_file('./rdylgn.png')
+
   rgb = result.maplut(rdylgn_image)
 
   # save to file
-  rgb.bandjoin(alpha).write_to_file('./' + index.lower() + '.png')
+  rgb[0:3].bandjoin(alpha).write_to_file('./' + index.lower() + '.png')
 
 
 apply_index(sys.argv[1], sys.argv[2])
