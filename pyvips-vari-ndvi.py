@@ -40,10 +40,9 @@ def apply_index(input_file, index):
     # Scale to 0-65535 to use percent()
     factor = 65535.0 / (max_val - min_val)
     scaled = (result - min_val) * factor
-    scaled_ushort = scaled.cast("ushort")
 
-    nmin = min_val + scaled_ushort.percent(3) / factor
-    nmax = min_val + scaled_ushort.percent(97) / factor
+    nmin = min_val + scaled.percent(3) / factor
+    nmax = min_val + scaled.percent(97) / factor
 
   # apply image manipulation algebra to 'normalize' results
   if nmax == nmin:
