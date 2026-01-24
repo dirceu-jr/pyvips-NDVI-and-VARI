@@ -1,79 +1,20 @@
 import sys
 
-# install with 'pip install numpy'
-import numpy
-
 # install with 'pip install pyvips'
 import pyvips
-
-numpy.set_printoptions(threshold = numpy.inf)
-
-# find min/max and histogram
-def result_histogram(result):
-  np_2d = numpy.ndarray(
-    buffer = result.write_to_memory(),
-    dtype = numpy.float32,
-    shape = [result.height, result.width]
-  )
-
-  return numpy.histogram(result, bins = 256)[0]
-
-
-# Remaps value (that has an expected range of in_low to in_high) into a target range of to_low to to_high
-def math_map_value(value, in_low, in_high, to_low, to_high):
-  return to_low + (value - in_low) * (to_high - to_low) / (in_high - in_low)
-
-
-def find_clipped_min_max(histogram, nmin, nmax):
-  # histogram
-  summed = sum(histogram)
-  three_percent = summed * 0.03
-  lower_sum = 0
-  upper_sum = 0
-  last_lower_i = 0
-  last_upper_i = 0
-
-  histogram_len = len(histogram)
-
-  for i in range(histogram_len):
-    # summing up values in lower_sum til the sum is >= 3% of the sum of all data values
-    # last_lower_i will be the data position right before lower_sum summed equal to 3% of the sum of all data values
-    if lower_sum < three_percent:
-      lower_sum += histogram[i]
-      last_lower_i = i
-
-    # // the same with last_upper_i
-    if upper_sum < three_percent:
-      upper_sum += histogram[histogram_len - 1 - i]
-      last_upper_i = histogram_len - 1 - i
-
-  return {
-    'nmin': math_map_value(last_lower_i, 0, 255, nmin, nmax),
-    'nmax': math_map_value(last_upper_i, 0, 255, nmin, nmax)
-  }
-
-
-# return image bands depending of band_order
-def bandsplit(image, band_order):
-  if band_order == 'GRN':
-    second, first, third, alpha = image.bandsplit()
-  else:
-    first, second, third, alpha = image.bandsplit()
-  
-  return [first, second, third, alpha]
 
 
 # apply image manipulation algebra
 # VARI
-def vari(image, band_order):
-  r, g, b, alpha = bandsplit(image, band_order)
+def vari(image):
+  r, g, b, alpha = image.bandsplit()
   index = (g - r) / (g + r - b)
   return [alpha, index]
 
 
 # NDVI
-def ndvi(image, band_order):
-  r, g, nir, alpha = bandsplit(image, band_order)
+def ndvi(image):
+  r, g, nir, alpha = image.bandsplit()
   index = (nir - r) / (nir + r)
   return [alpha, index]
 
@@ -84,20 +25,31 @@ def apply_index(input_file, index):
 
   # call index method
   if index == 'NDVI':
-    alpha, result = ndvi(image, 'RGN')
+    alpha, result = ndvi(image)
   elif index == 'VARI':
-    alpha, result = vari(image, 'RGB')
+    alpha, result = vari(image)
 
-  # it will be used to 'normalize' results
-  histogram = result_histogram(result)
-  clip_min_max = find_clipped_min_max(histogram, result.min(), result.max())
+  # Find min/max and percentiles
+  min_val = result.min()
+  max_val = result.max()
 
-  # normalize min/max
-  nmin = clip_min_max['nmin']
-  nmax = clip_min_max['nmax']
+  if max_val == min_val:
+    nmin = min_val
+    nmax = max_val
+  else:
+    # Scale to 0-65535 to use percent()
+    factor = 65535.0 / (max_val - min_val)
+    scaled = (result - min_val) * factor
+    scaled_ushort = scaled.cast("ushort")
+
+    nmin = min_val + scaled_ushort.percent(3) / factor
+    nmax = min_val + scaled_ushort.percent(97) / factor
 
   # apply image manipulation algebra to 'normalize' results
-  result = ((result - nmin) / (nmax - nmin)) * 256
+  if nmax == nmin:
+    result = result.new_from_image(0)
+  else:
+    result = ((result - nmin) / (nmax - nmin)) * 256
 
   # apply Look-Up-Table (LUT)
   rdylgn_image = pyvips.Image.new_from_file('./rdylgn.png')
