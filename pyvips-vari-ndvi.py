@@ -1,10 +1,10 @@
 import sys
 
-# install with 'pip install pyvips'
+# Install with 'pip install pyvips'
 import pyvips
 
 
-# apply image manipulation algebra
+# Apply image manipulation algebra
 # VARI
 def vari(image):
   r, g, b, alpha = image.bandsplit()
@@ -19,11 +19,12 @@ def ndvi(image):
   return [alpha, index]
 
 
+# Apply index with Contrast Stretching
 def apply_index(input_file, index):
-  # load image
+  # Load image
   image = pyvips.Image.new_from_file('./' + input_file)
 
-  # call index method
+  # Call index method
   if index == 'NDVI':
     alpha, result = ndvi(image)
   elif index == 'VARI':
@@ -48,16 +49,16 @@ def apply_index(input_file, index):
   if nmax == nmin:
     result = result.new_from_image(0)
   else:
-    # apply image manipulation algebra to 'normalize' results
+    # Apply image manipulation algebra to 'normalize' results
     # Scale to 0-255 for 8-bit LUT
     result = ((result - nmin) / (nmax - nmin)) * 255
 
-  # apply Look-Up-Table (LUT)
+  # Apply Look-Up-Table (LUT)
   rdylgn_image = pyvips.Image.new_from_file('./rdylgn.png')
 
   rgb = result.maplut(rdylgn_image)
 
-  # save to file
+  # Save to file
   rgb[0:3].bandjoin(alpha).write_to_file('./' + index.lower() + '.png')
 
 

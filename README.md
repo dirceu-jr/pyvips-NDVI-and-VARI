@@ -10,6 +10,12 @@ The NDVI is calculated from these individual measurements as follows: `NDVI = (N
 
 And `VARI = (Green - Red) / (Green + Red - Blue)`
 
+## Technique
+
+This script uses **Contrast Stretching** (specifically *linear contrast stretching* with percentile clipping) to enhance the results.
+
+The calculated index values are normalized to a 0-255 range using the 3rd and 97th percentiles as the minimum and maximum scaling points. This ensures better visualization of the vegetation differences by spreading the values across the available dynamic range and ignoring outliers.
+
 ## What is libvips?
 
 libvips is a fast and open source image processing library.
