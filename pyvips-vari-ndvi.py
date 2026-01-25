@@ -40,15 +40,17 @@ def apply_index(input_file, index):
     # Scale to 0-65535 to use percent()
     factor = 65535.0 / (max_val - min_val)
     scaled = (result - min_val) * factor
+    scaled_ushort = scaled.cast("ushort")
 
-    nmin = min_val + scaled.percent(3) / factor
-    nmax = min_val + scaled.percent(97) / factor
+    nmin = min_val + scaled_ushort.percent(3) / factor
+    nmax = min_val + scaled_ushort.percent(97) / factor
 
-  # apply image manipulation algebra to 'normalize' results
   if nmax == nmin:
     result = result.new_from_image(0)
   else:
-    result = ((result - nmin) / (nmax - nmin)) * 256
+    # apply image manipulation algebra to 'normalize' results
+    # Scale to 0-255 for 8-bit LUT
+    result = ((result - nmin) / (nmax - nmin)) * 255
 
   # apply Look-Up-Table (LUT)
   rdylgn_image = pyvips.Image.new_from_file('./rdylgn.png')
