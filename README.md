@@ -20,7 +20,6 @@ Install [libvips](https://libvips.github.io/libvips/install.html) and [Python](h
 
 ```
 pip3 install pyvips
-pip3 install numpy
 ```
 
 ## Run
