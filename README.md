@@ -16,7 +16,7 @@ libvips is a fast and open source image processing library.
 
 ## Prerequisites
 
-Install [libvips](https://libvips.github.io/libvips/install.html) and [Python](https://www.python.org/). Then use PIP to install 'pyvips' and 'numpy' packages:
+Install [libvips](https://libvips.github.io/libvips/install.html) and [Python](https://www.python.org/). Then use PIP to install 'pyvips' package:
 
 ```
 pip3 install pyvips
